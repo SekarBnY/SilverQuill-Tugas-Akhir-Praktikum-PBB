@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 import { THEMES } from '../constants/themes';
 import { supabase } from '../lib/supabase';
-import { User, Palette, LogIn, LogOut, Tag, Plus, X, Info } from 'lucide-react';
+import { User, Palette, LogIn, LogOut, Tag, Plus, X, Info, BarChart2 } from 'lucide-react'; // <--- Add BarChart2
 
 const Profile = () => {
     const { theme, changeTheme, currentThemeKey } = useTheme();
@@ -13,7 +13,10 @@ const Profile = () => {
     // Tag State
     const [tags, setTags] = useState([]);
     const [newTagName, setNewTagName] = useState('');
-    const [newTagColor, setNewTagColor] = useState('#3b82f6'); // Default Blue
+    const [newTagColor, setNewTagColor] = useState('#3b82f6'); 
+
+    // Stats State
+    const [stats, setStats] = useState({ totalBooks: 0, totalPages: 0, readBooks: 0 });
 
     useEffect(() => {
         checkUser();
@@ -22,7 +25,25 @@ const Profile = () => {
     const checkUser = async () => {
         const { data: { user } } = await supabase.auth.getUser();
         setUser(user);
-        if (user) fetchTags(user.id);
+        if (user) {
+            fetchTags(user.id);
+            fetchStats(user.id); // <--- Fetch stats when user loads
+        }
+    };
+
+    const fetchStats = async (userId) => {
+        // Fetch books to calculate stats
+        const { data } = await supabase.from('books').select('status, total_pages, current_page').eq('user_id', userId);
+        
+        if (data) {
+            const totalBooks = data.length;
+            const readBooks = data.filter(b => b.status === 'Read').length;
+            // Sum of pages read across all books (even unfinished ones)
+            // We use current_page to count actual progress
+            const totalPages = data.reduce((acc, curr) => acc + (curr.current_page || 0), 0);
+            
+            setStats({ totalBooks, totalPages, readBooks });
+        }
     };
 
     const fetchTags = async (userId) => {
@@ -73,10 +94,37 @@ const Profile = () => {
                 </div>
             </div>
 
-            {/* Tag Manager (Only show if logged in/guest) */}
+            {/* Reading Stats Section (NEW!) */}
             {user && (
                 <section className="mb-8">
-                    <h3 className={`text-sm font-bold uppercase tracking-wider mb-3 ${theme.subtext}`}>Your Tags</h3>
+                    <div className="flex items-center gap-2 mb-4">
+                        <BarChart2 size={18} className={theme.subtext} />
+                        <h3 className={`text-sm font-bold uppercase tracking-wider ${theme.subtext}`}>Reading Stats</h3>
+                    </div>
+                    <div className="grid grid-cols-3 gap-3">
+                        <div className={`p-4 rounded-xl border text-center ${theme.surface} ${theme.border}`}>
+                            <div className={`text-2xl font-bold ${theme.text}`}>{stats.totalBooks}</div>
+                            <div className={`text-xs font-bold uppercase mt-1 ${theme.subtext}`}>Books</div>
+                        </div>
+                        <div className={`p-4 rounded-xl border text-center ${theme.surface} ${theme.border}`}>
+                            <div className={`text-2xl font-bold ${theme.accent}`}>{stats.readBooks}</div>
+                            <div className={`text-xs font-bold uppercase mt-1 ${theme.subtext}`}>Finished</div>
+                        </div>
+                        <div className={`p-4 rounded-xl border text-center ${theme.surface} ${theme.border}`}>
+                            <div className={`text-2xl font-bold ${theme.primaryText} px-2 py-0.5 rounded bg-opacity-20`} style={{ color: theme.highlight }}>{stats.totalPages}</div>
+                            <div className={`text-xs font-bold uppercase mt-1 ${theme.subtext}`}>Pages</div>
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            {/* Tag Manager */}
+            {user && (
+                <section className="mb-8">
+                    <div className="flex items-center gap-2 mb-4">
+                        <Tag size={18} className={theme.subtext} />
+                        <h3 className={`text-sm font-bold uppercase tracking-wider ${theme.subtext}`}>Your Tags</h3>
+                    </div>
                     <div className={`p-4 rounded-xl border ${theme.surface} ${theme.border}`}>
                         <div className="flex gap-2 mb-4">
                             <input 
