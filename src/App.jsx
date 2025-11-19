@@ -12,7 +12,7 @@ import BookDetail from './pages/BookDetail';
 import Login from './pages/Login';
 import Wishlist from './pages/Wishlist';
 import Quotes from './pages/Quotes';
-import EditBook from './pages/EditBook'; // <--- New Import
+import EditBook from './pages/EditBook'; // <--- Ensure this file exists
 
 // Layout Component: Wraps pages with the Theme and Navigation
 const Layout = ({ children }) => {
@@ -50,7 +50,7 @@ function App() {
                     
                     {/* Detail & Edit Routes */}
                     <Route path="/book/:id" element={<BookDetail />} />
-                    <Route path="/edit/:id" element={<EditBook />} /> {/* <--- New Route */}
+                    <Route path="/edit/:id" element={<EditBook />} />
                     
                     {/* Collection Routes */}
                     <Route path="/wishlist" element={<Wishlist />} />

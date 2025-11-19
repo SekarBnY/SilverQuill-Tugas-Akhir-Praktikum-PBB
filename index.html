@@ -2,31 +2,31 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- 1. Viewport: Critical for mobile responsiveness -->
+    <!-- 1. Viewport for Mobile -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     
     <!-- 2. PWA Manifest Link -->
     <link rel="manifest" href="/manifest.json" />
     
-    <!-- 3. PWA Theme Color (Matches your manifest background) -->
+    <!-- 3. Theme Color -->
     <meta name="theme-color" content="#1e293b" />
     
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <!-- 4. YOUR MASCOT ICON (Fixed) -->
+    <link rel="icon" type="image/png" href="/mascot.png" />
+    
     <title>SilverQuill</title>
   </head>
   <body>
     <div id="root"></div>
-    
-    <!-- React Entry Point -->
     <script type="module" src="/src/main.jsx"></script>
 
-    <!-- 4. Service Worker Registration Logic -->
+    <!-- Service Worker Registration -->
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('/sw.js')
-            .then(reg => console.log('Service Worker registered! Scope:', reg.scope))
-            .catch(err => console.log('Service Worker registration failed:', err));
+            .then(reg => console.log('SW registered:', reg.scope))
+            .catch(err => console.log('SW failed:', err));
         });
       }
     </script>

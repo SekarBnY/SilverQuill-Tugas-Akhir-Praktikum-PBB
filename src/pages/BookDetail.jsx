@@ -34,7 +34,7 @@ const BookDetail = () => {
         
         if (bookError) {
             console.error(bookError);
-            // If book doesn't exist, maybe redirect home
+            // If book doesn't exist, maybe redirect home or show error
         } else {
             setBook(bookData);
         }
