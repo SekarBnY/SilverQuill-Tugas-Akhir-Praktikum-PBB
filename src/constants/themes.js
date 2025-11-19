@@ -1,0 +1,72 @@
+export const THEMES = {
+    silverMist: {
+        name: "Silver Mist",
+        bg: "bg-gray-50",
+        surface: "bg-white",
+        text: "text-slate-800",
+        subtext: "text-slate-500",
+        accent: "text-slate-600",
+        primary: "bg-slate-800",
+        primaryText: "text-white",
+        border: "border-slate-200",
+        mascotColor: "#94a3b8",
+        highlight: "text-red-500",
+        ribbon: "text-blue-500"
+    },
+    autumnInk: {
+        name: "Autumn Ink",
+        bg: "bg-orange-50",
+        surface: "bg-[#fffbf7]",
+        text: "text-amber-950",
+        subtext: "text-amber-700/60",
+        accent: "text-orange-700",
+        primary: "bg-amber-800",
+        primaryText: "text-orange-50",
+        border: "border-orange-200",
+        mascotColor: "#d97706",
+        highlight: "text-red-600",
+        ribbon: "text-amber-600"
+    },
+    midnightLib: {
+        name: "Midnight Library",
+        bg: "bg-slate-900",
+        surface: "bg-slate-800",
+        text: "text-slate-100",
+        subtext: "text-slate-400",
+        accent: "text-teal-400",
+        primary: "bg-teal-600",
+        primaryText: "text-white",
+        border: "border-slate-700",
+        mascotColor: "#2dd4bf",
+        highlight: "text-pink-400",
+        ribbon: "text-cyan-400"
+    },
+    pastelPages: {
+        name: "Pastel Pages",
+        bg: "bg-rose-50",
+        surface: "bg-white",
+        text: "text-slate-700",
+        subtext: "text-slate-500",
+        accent: "text-pink-500",
+        primary: "bg-rose-400",
+        primaryText: "text-white",
+        border: "border-rose-100",
+        mascotColor: "#fb7185",
+        highlight: "text-rose-500",
+        ribbon: "text-indigo-400"
+    },
+    classicPaper: {
+        name: "Classic Paper",
+        bg: "bg-[#f5f5f0]",
+        surface: "bg-[#fdfdfc]",
+        text: "text-black",
+        subtext: "text-stone-500",
+        accent: "text-yellow-700",
+        primary: "bg-black",
+        primaryText: "text-white",
+        border: "border-stone-300",
+        mascotColor: "#44403c",
+        highlight: "text-red-700",
+        ribbon: "text-blue-800"
+    }
+};
