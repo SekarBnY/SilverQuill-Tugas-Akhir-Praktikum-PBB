@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import { Navigation } from './components/Navigation';
 
-// Import Pages
+
 import Home from './pages/Home';
 import AddBook from './pages/AddBook';
 import Saved from './pages/Saved';
@@ -12,13 +12,11 @@ import BookDetail from './pages/BookDetail';
 import Login from './pages/Login';
 import Wishlist from './pages/Wishlist';
 import Quotes from './pages/Quotes';
-import EditBook from './pages/EditBook'; // <--- Ensure this file exists
+import EditBook from './pages/EditBook';
 
-// Layout Component: Wraps pages with the Theme and Navigation
 const Layout = ({ children }) => {
     const { theme } = useTheme();
     
-    // Safety check to prevent crash before theme loads
     if (!theme) return <div className="p-4">Loading Theme...</div>;
 
     return (

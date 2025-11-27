@@ -25,12 +25,9 @@ const Home = () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) { setLoading(false); return; }
 
-        // 1. Fetch User Tags for Filter Bar
         const { data: tagsData } = await supabase.from('tags').select('*').eq('user_id', user.id);
         if (tagsData) setAllTags(tagsData);
 
-        // 2. Fetch Books with Tags Joined
-        // We use a deep select to get the book_tags, then the actual tag details
         const { data: booksData, error } = await supabase
             .from('books')
             .select(`
@@ -48,9 +45,7 @@ const Home = () => {
 
         if (error) console.error('Error fetching books:', error);
         else {
-            // 3. Transform Data: Flatten the nested structure
-            // From: book.book_tags[0].tags.name
-            // To:   book.tags[0].name
+
             const processedBooks = booksData.map(book => ({
                 ...book,
                 tags: book.book_tags.map(bt => bt.tags).filter(t => t !== null)
@@ -61,7 +56,6 @@ const Home = () => {
         setLoading(false);
     };
 
-    // Filter Logic
     const filteredBooks = books.filter(book => {
         const matchesSearch = book.title.toLowerCase().includes(search.toLowerCase()) || 
                               book.author.toLowerCase().includes(search.toLowerCase());
@@ -69,14 +63,11 @@ const Home = () => {
         let matchesFilter = true;
 
         if (filter !== 'All') {
-            // Check if filter is a Status (like "Reading")
             const isStatus = ['Reading', 'Read', 'Want to Read', 'DNF'].includes(filter);
             
             if (isStatus) {
                 matchesFilter = book.status === filter;
             } else {
-                // Check if filter is a Tag ID
-                // We check if ANY of the book's tags matches the filter ID
                 matchesFilter = book.tags && book.tags.some(t => t.id === filter);
             }
         }
@@ -174,7 +165,7 @@ const Home = () => {
                     )}
                 </div>
             ) : (
-                // The Grid
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {filteredBooks.map(book => (
                         <BookCard 

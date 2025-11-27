@@ -15,7 +15,6 @@ const Login = () => {
         setLoading(true);
 
         if (isSignUp) {
-            // REGISTER Logic
             const { data, error } = await supabase.auth.signUp({
                 email,
                 password,
@@ -27,7 +26,6 @@ const Login = () => {
                 navigate('/');
             }
         } else {
-            // LOGIN Logic
             const { data, error } = await supabase.auth.signInWithPassword({
                 email,
                 password,
@@ -44,14 +42,12 @@ const Login = () => {
     const handleGuestLogin = async () => {
         setLoading(true);
         
-        // 1. Try the standard Guest Login
         const { error } = await supabase.auth.signInAnonymously();
         
         if (error) {
             console.warn("Standard Guest Login failed. Attempting Stealth Mode...", error);
             
-            // 2. FALLBACK: Create a "Stealth" Email Account automatically
-            // This creates a unique fake user so you can still enter without typing.
+
             const uniqueId = Date.now();
             const fakeEmail = `guest_${uniqueId}@silverquill.temp`;
             const fakePassword = `guest_pass_${uniqueId}`;
@@ -64,7 +60,6 @@ const Login = () => {
             if (stealthError) {
                 alert("Login system unavailable. Please create an account manually.");
             } else {
-                // Success!
                 navigate('/');
             }
         } else {

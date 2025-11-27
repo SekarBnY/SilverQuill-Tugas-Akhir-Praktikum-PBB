@@ -70,7 +70,6 @@ const AddBook = () => {
             user = guestData.user;
         }
 
-        // 1. Upload Image
         let finalCoverUrl = null;
         if (coverFile) {
             const fileExt = coverFile.name.split('.').pop();
@@ -83,7 +82,6 @@ const AddBook = () => {
             }
         }
 
-        // 2. Insert Book
         const { data: bookData, error: bookError } = await supabase.from('books').insert([{
             ...formData,
             user_id: user.id,
@@ -94,7 +92,6 @@ const AddBook = () => {
 
         if (bookError) { alert("Error: " + bookError.message); setLoading(false); return; }
 
-        // 3. Insert Quotes & Tags
         const validQuotes = quotes.filter(q => q.trim() !== '');
         if (validQuotes.length > 0) {
             await supabase.from('quotes').insert(validQuotes.map(q => ({ book_id: bookData.id, user_id: user.id, quote_text: q })));

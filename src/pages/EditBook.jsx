@@ -5,23 +5,21 @@ import { supabase } from '../lib/supabase';
 import { ChevronLeft, Star, Plus, X, Quote, Image as ImageIcon, Loader2 } from 'lucide-react';
 
 const EditBook = () => {
-    const { id } = useParams(); // Get Book ID from URL
+    const { id } = useParams();
     const { theme } = useTheme();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
 
-    // Data State
     const [formData, setFormData] = useState({
         title: '', author: '', status: 'Reading', rating_overall: 0, review_text: '', total_pages: ''
     });
     const [quotes, setQuotes] = useState(['']);
     
-    // Tag State
     const [availableTags, setAvailableTags] = useState([]);
     const [selectedTags, setSelectedTags] = useState([]);
 
-    // Image State
+
     const [coverFile, setCoverFile] = useState(null);
     const [coverPreview, setCoverPreview] = useState(null);
     const [existingCoverUrl, setExistingCoverUrl] = useState(null);
@@ -32,7 +30,6 @@ const EditBook = () => {
     }, [id]);
 
     const fetchBookData = async () => {
-        // 1. Fetch Book Details
         const { data: book, error } = await supabase.from('books').select('*').eq('id', id).single();
         if (error) {
             console.error(error);
@@ -51,13 +48,11 @@ const EditBook = () => {
         setExistingCoverUrl(book.cover_url);
         setCoverPreview(book.cover_url);
 
-        // 2. Fetch Quotes
         const { data: quoteData } = await supabase.from('quotes').select('quote_text').eq('book_id', id);
         if (quoteData && quoteData.length > 0) {
             setQuotes(quoteData.map(q => q.quote_text));
         }
 
-        // 3. Fetch Existing Tags
         const { data: tagData } = await supabase.from('book_tags').select('tag_id').eq('book_id', id);
         if (tagData) {
             setSelectedTags(tagData.map(t => t.tag_id));
@@ -90,7 +85,6 @@ const EditBook = () => {
         }
     };
 
-    // Quote Helpers
     const handleQuoteChange = (index, value) => { const newQ = [...quotes]; newQ[index] = value; setQuotes(newQ); };
     const addQuoteField = () => setQuotes([...quotes, '']);
     const removeQuoteField = (index) => setQuotes(quotes.filter((_, i) => i !== index));
@@ -100,7 +94,6 @@ const EditBook = () => {
         setSaving(true);
         const { data: { user } } = await supabase.auth.getUser();
 
-        // 1. Upload New Image (if changed)
         let finalCoverUrl = existingCoverUrl;
         if (coverFile) {
             const fileExt = coverFile.name.split('.').pop();
@@ -114,14 +107,12 @@ const EditBook = () => {
             }
         }
 
-        // 2. Update Book Data
         await supabase.from('books').update({
             ...formData,
             cover_url: finalCoverUrl,
             total_pages: parseInt(formData.total_pages) || 0,
         }).eq('id', id);
 
-        // 3. Sync Quotes (Delete old, insert new - simplest way to handle edits)
         await supabase.from('quotes').delete().eq('book_id', id);
         const validQuotes = quotes.filter(q => q.trim() !== '');
         if (validQuotes.length > 0) {
@@ -130,14 +121,13 @@ const EditBook = () => {
             })));
         }
 
-        // 4. Sync Tags (Delete old, insert new)
         await supabase.from('book_tags').delete().eq('book_id', id);
         if (selectedTags.length > 0) {
             const tagInserts = selectedTags.map(tagId => ({ book_id: id, tag_id: tagId }));
             await supabase.from('book_tags').insert(tagInserts);
         }
 
-        navigate(`/book/${id}`); // Go back to detail page
+        navigate(`/book/${id}`);
         setSaving(false);
     };
 

@@ -6,7 +6,7 @@ import { ChevronLeft, Trash2, Heart, Bookmark, Star, Clock, BookOpen, Quote, Plu
 import { ProgressBar } from '../components/ProgressBar';
 
 const BookDetail = () => {
-    const { id } = useParams(); // Get ID from URL
+    const { id } = useParams();
     const navigate = useNavigate();
     const { theme } = useTheme();
     
@@ -25,7 +25,6 @@ const BookDetail = () => {
     }, [id]);
 
     const fetchData = async () => {
-        // 1. Fetch Book Details
         const { data: bookData, error: bookError } = await supabase
             .from('books')
             .select('*')
@@ -34,12 +33,10 @@ const BookDetail = () => {
         
         if (bookError) {
             console.error(bookError);
-            // If book doesn't exist, maybe redirect home or show error
         } else {
             setBook(bookData);
         }
 
-        // 2. Fetch Reading Logs
         const { data: logData } = await supabase
             .from('reading_logs')
             .select('*')
@@ -48,7 +45,6 @@ const BookDetail = () => {
         
         if (logData) setLogs(logData);
 
-        // 3. Fetch Quotes (from the new quotes table)
         const { data: quoteData } = await supabase
             .from('quotes')
             .select('*')
@@ -60,7 +56,6 @@ const BookDetail = () => {
         setLoading(false);
     };
 
-    // --- ACTIONS ---
 
     const handleAddQuote = async (e) => {
         e.preventDefault();
@@ -88,7 +83,6 @@ const BookDetail = () => {
         const pagesRead = parseInt(newLog.pages);
         const minutesRead = parseInt(newLog.minutes);
 
-        // 1. Save Log
         const { data: savedLog } = await supabase.from('reading_logs').insert([{
             book_id: id, 
             user_id: user.id, 
@@ -97,14 +91,12 @@ const BookDetail = () => {
         }]).select().single();
 
         if (savedLog) {
-            // 2. Update Book Progress
             const newCurrent = Math.min((book.current_page || 0) + pagesRead, book.total_pages);
             
             await supabase.from('books')
                 .update({ current_page: newCurrent })
                 .eq('id', id);
 
-            // 3. Update UI
             setLogs([savedLog, ...logs]);
             setBook({ ...book, current_page: newCurrent });
             setNewLog({ pages: '', minutes: '' });
@@ -112,7 +104,6 @@ const BookDetail = () => {
     };
 
     const toggleAttribute = async (attr) => {
-        // Optimistic update (update screen before DB)
         const newValue = !book[attr];
         setBook({ ...book, [attr]: newValue });
         
@@ -126,8 +117,6 @@ const BookDetail = () => {
         await supabase.from('books').delete().eq('id', id);
         navigate('/');
     };
-
-    // --- RENDER ---
 
     if (loading) return <div className="p-8 text-center">Loading...</div>;
     if (!book) return <div className="p-8 text-center">Book not found.</div>;

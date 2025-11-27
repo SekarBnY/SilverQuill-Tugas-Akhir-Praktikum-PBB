@@ -27,19 +27,16 @@ const Profile = () => {
         setUser(user);
         if (user) {
             fetchTags(user.id);
-            fetchStats(user.id); // <--- Fetch stats when user loads
+            fetchStats(user.id);
         }
     };
 
     const fetchStats = async (userId) => {
-        // Fetch books to calculate stats
         const { data } = await supabase.from('books').select('status, total_pages, current_page').eq('user_id', userId);
         
         if (data) {
             const totalBooks = data.length;
             const readBooks = data.filter(b => b.status === 'Read').length;
-            // Sum of pages read across all books (even unfinished ones)
-            // We use current_page to count actual progress
             const totalPages = data.reduce((acc, curr) => acc + (curr.current_page || 0), 0);
             
             setStats({ totalBooks, totalPages, readBooks });

@@ -4,7 +4,6 @@ import { useTheme } from '../contexts/ThemeContext';
 export const ProgressBar = ({ current, total, mini = false }) => {
     const { theme } = useTheme();
     
-    // Calculate percentage (prevent division by zero)
     const pct = total > 0 ? Math.min(100, Math.max(0, (current / total) * 100)) : 0;
 
     if (mini) {
